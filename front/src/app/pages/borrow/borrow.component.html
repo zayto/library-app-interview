@@ -1,0 +1,25 @@
+<div class="container">
+  <h1>Borrow a book</h1>
+  <p>
+    Find your next read from our collection and borrow it using the form below.
+  </p>
+
+  <form class="example-form">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Book Title</mat-label>
+      <input
+        type="text"
+        placeholder="Search a book title"
+        aria-label="Book title"
+        matInput
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let book of searchResults" [value]="book.title">
+          {{ book.title }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <button type="submit" mat-button-primary>Submit</button>
+  </form>
+</div>

@@ -1,0 +1,26 @@
+<div class="layout">
+  <div class="container">
+    <div class="home">
+      <h1>Welcome to our library!</h1>
+      <p>
+        You can get a preview of our book collections, borrow a book or return a
+        book once you're done:
+      </p>
+      <ul>
+        <li><a routerLink="/books">Find your next book</a></li>
+        <li><a routerLink="/borrow">Borrow a book</a></li>
+        <li><a routerLink="/return">Return a book</a></li>
+      </ul>
+    </div>
+    <div class="img">
+      <picture>
+        <img src="/assets/library.jpg" title="Just a library" alt="Just a library" width="960" height="540" />
+        <!-- Ideally we would want different images with lower resolutions for smaller screen sizes to display a more
+           appropriate image based on the device, and we would want to offer a .webp format and default to a jpg 
+           if webp isn't supported in the browser. Currently we use the same non-optimized image with a high resolution -->
+        <source media="(max-width: 799px)" srcset="/assets/library.jpg">
+        <source media="(min-width: 800px)" srcset="/assets/library.jpg">
+      </picture>
+    </div>
+  </div>
+</div>

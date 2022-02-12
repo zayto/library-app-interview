@@ -1,0 +1,29 @@
+@media screen and (min-width: 1200px) {
+  .home {
+    width: 1200px;
+  } 
+}
+
+@media screen and (max-width: 1199px) {
+  .home {
+    width: 100%;
+  } 
+}
+
+a:hover {
+  font-weight: bold;
+}
+
+.img {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen {
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+}

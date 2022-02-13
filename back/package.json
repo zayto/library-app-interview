@@ -1,9 +1,10 @@
 {
-  "name": "library-app-interview",
+  "name": "back",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "docker:dev": "docker-compose -f automation/docker-compose.yml up --build -d mongodb",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

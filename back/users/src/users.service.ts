@@ -1,31 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { IUserRequest, IUserResponse } from './models/interfaces';
+import { User, UserDocument } from './models/user.schema';
 
 @Injectable()
 export class UsersService {
-  private users: IUserResponse[] = [
-    { id: 0, firstName: 'John', lastName: 'Doe', books: [] },
-    { id: 1, firstName: 'Jane', lastName: 'Doe', books: [] },
-    { id: 2, firstName: 'Bob', lastName: 'Doe', books: [] },
-  ];
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  getHello(): string {
-    return 'Hello World!';
+  async getUserById(id: string): Promise<IUserResponse> {
+    Logger.log(`GetUserById called with id ${id}`);
+    const user = this.userModel.findById<UserDocument>(id);
+    return user;
   }
 
-  async getUserById(id: number): Promise<IUserResponse> {
-    console.log(`GetUserById called with id ${id}`);
-    // TODO Retrieve user from db
-    const user = this.users?.find((user) => user?.id === id);
-    // Return user or some "default not found user"
-    return user || { id: -1, firstName: 'N/A', lastName: 'N/A', books: [] };
+  async getAllUsers(): Promise<User[]> {
+    return this.userModel.find().exec();
   }
 
-  async createUser(user: IUserRequest): Promise<void> {
-    // TODO createUser in db
-    console.log(`CreateUser called with payload`, {
+  async createUser(user: IUserRequest): Promise<IUserResponse> {
+    Logger.log(`CreateUser called with payload`, {
       user: JSON.stringify(user),
     });
-    return;
+    const createdUser = await this.userModel.create(user);
+    return createdUser;
   }
 }

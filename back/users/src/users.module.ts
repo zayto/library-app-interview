@@ -6,7 +6,7 @@ import { User, UserSchema } from './models/user.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/library'),
+    MongooseModule.forRoot('mongodb://user:password@localhost/library'),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],

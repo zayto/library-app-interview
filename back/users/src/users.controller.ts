@@ -8,8 +8,12 @@ export class UsersController {
 
   @Get('/users/:id')
   async getUserById(@Param('id') id: string): Promise<IUserResponse> {
-    // TODO Retrieve user data from db
     return await this.usersService.getUserById(id);
+  }
+
+  @Get('/users')
+  async getAllUsers(): Promise<IUserResponse[]> {
+    return await this.usersService.getAllUsers();
   }
 
   @Post('/users/create')

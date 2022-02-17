@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
+  IBookRefResponse,
   IBookRequest,
   IBookResponse,
   IUserRequest,
@@ -78,5 +79,12 @@ export class AppController {
       .toPromise();
 
     return createdBook;
+  }
+
+  @Get('refs')
+  async getBookRefs(): Promise<IBookRefResponse[]> {
+    const refs: IBookRefResponse[] = await this.booksClient.send('get_refs', {}).toPromise();
+
+    return refs;
   }
 }

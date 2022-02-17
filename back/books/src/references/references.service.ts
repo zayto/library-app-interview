@@ -71,6 +71,11 @@ export class ReferencesService {
     return await this.findBookRefById(id);
   }
 
+  public async getAllBooksRefs(): Promise<IBookRefResponse[]> {
+    // TODO Change to use db bookRefs
+    return this.refs;
+  }
+
   public async createBookRef(book: IBookRefRequest): Promise<IBookRefResponse> {
     // TODO create book in db and return it
     Logger.log(`CreateBook called with payload`, {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docker:dev": "docker-compose -f automation/docker-compose.yml up --build -d mongodb",
+    "docker:dev": "docker-compose -f automation/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f automation/docker-compose.yml down",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

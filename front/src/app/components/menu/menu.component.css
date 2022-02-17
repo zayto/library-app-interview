@@ -10,7 +10,8 @@
   max-width: 1200px;
 }
 
-.mat-toolbar-row, .mat-toolbar-single-row {
+.mat-toolbar-row,
+.mat-toolbar-single-row {
   padding: 0;
 }
 
@@ -21,7 +22,7 @@
 @media screen and (max-width: 1199px) {
   .app-title {
     padding-left: 10px;
-  }    
+  }
 }
 
 .nav-link {

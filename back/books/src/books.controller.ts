@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { BooksService } from './books.service';
 import { IBookRequest, IBookResponse } from './models/interfaces';
 
@@ -6,19 +7,18 @@ import { IBookRequest, IBookResponse } from './models/interfaces';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @Get()
-  getHello(): string {
-    return this.booksService.getHello();
+  @MessagePattern('get_book')
+  async getBookById(@Payload() payload: { id: string }): Promise<IBookResponse> {
+    return await this.booksService.getBookByReference(payload.id);
   }
 
-  @Get('/users/:id')
-  async getUserById(@Param('id') id: number): Promise<IBookResponse> {
-    // TODO Retrieve book data from db
-    return await this.booksService.getBookById(id);
+  @MessagePattern('get_books')
+  async getAllBooks(): Promise<IBookResponse[]> {
+    return await this.booksService.getAllBooks();
   }
 
-  @Post('/books/create')
-  async create(@Body() book: IBookRequest): Promise<void> {
+  @MessagePattern('create_book')
+  async createBook(@Payload() book: IBookRequest): Promise<IBookResponse> {
     return await this.booksService.createBook(book);
   }
 }

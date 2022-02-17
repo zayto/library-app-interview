@@ -6,6 +6,8 @@ export type BookDocument = Book & Document;
 
 @Schema()
 export class Book {
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   status: BookStatusEnum;
 

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export enum BookStatusEnum {
   AVAILABLE = 'AVAILABLE',
   BORROWED = 'BORROWED',
@@ -19,10 +21,10 @@ export interface IBookRequest {
 }
 
 export interface IBookResponse {
-  id: string;
-  reference: string; // A reference to the actual book (bookRefs collection)
+  _id: Types.ObjectId;
+  reference: Types.ObjectId; // A reference to the actual book (bookRefs collection)
   status: BookStatusEnum;
-  owner: string; // A reference to the User who currently owns the book (users collection)
+  owner: Types.ObjectId; // A reference to the User who currently owns the book (users collection)
 }
 
 export interface IBookRefRequest {
@@ -34,7 +36,7 @@ export interface IBookRefRequest {
 }
 
 export interface IBookRefResponse {
-  id: string;
+  _id: Types.ObjectId;
   title: string;
   author: string;
   excerpt: string;

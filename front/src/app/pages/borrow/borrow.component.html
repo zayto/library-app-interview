@@ -5,21 +5,24 @@
   </p>
 
   <form class="example-form">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Book Title</mat-label>
-      <input
-        type="text"
-        placeholder="Search a book title"
-        aria-label="Book title"
-        matInput
-        [matAutocomplete]="auto"
-      />
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let book of searchResults" [value]="book.title">
+    <mat-form-field appearance="fill">
+      <mat-label>Favorite Book</mat-label>
+      <mat-select name="book">
+        <mat-option *ngFor="let book of books" [value]="book._id">
           {{ book.title }}
         </mat-option>
-      </mat-autocomplete>
+      </mat-select>
     </mat-form-field>
-    <button type="submit" mat-button-primary>Submit</button>
+    <mat-form-field appearance="fill">
+      <mat-label>User</mat-label>
+      <mat-select name="user">
+        <mat-option *ngFor="let user of users" [value]="user._id">
+          {{ user.firstName }} {{ user.lastName?.toUpperCase() }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button type="submit" (ngSubmit)="onSubmit($event)" mat-button-primary>
+      Submit
+    </button>
   </form>
 </div>

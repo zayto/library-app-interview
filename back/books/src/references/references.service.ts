@@ -1,68 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import {
   BookRefStatusEnum,
   IBookRefRequest,
   IBookRefResponse,
 } from 'src/models/interfaces';
+import { Reference, ReferenceDocument } from 'src/models/reference.schema';
 
 @Injectable()
 export class ReferencesService {
-  // TODO Add mongoose model and use mongoose connection/operations to replace dummy data
+  constructor(
+    @InjectModel(Reference.name) private refModel: Model<ReferenceDocument>,
+  ) {}
 
-  // Dummy data for array of real books that represent the library's collection
-  private refs: IBookRefResponse[] = [
-    {
-      _id: new Types.ObjectId('6209880b6f43a7e034c81001'),
-      author: 'John Snow 1',
-      title: 'Beyond the Wall',
-      available: 5,
-      totalQuantity: 5,
-      status: BookRefStatusEnum.AVAILABLE,
-      excerpt:
-        "Night gathers, and now my watch begins. It shall not end until my death. I shall take no wife, hold no lands, father no children. I shall wear no crowns and win no glory. I shall live and die at my post. I am the sword in the darkness. I am the watcher on the walls. I am the shield that guards the realms of men. I pledge my life and honor to the Night's Watch, for this night and all the nights to come. ―The Night's Watch oath",
-    },
-    {
-      _id: new Types.ObjectId('6209880b6f43a7e034c81002'),
-      author: 'John Snow 2',
-      title: 'Beyond the Wall',
-      available: 5,
-      totalQuantity: 5,
-      status: BookRefStatusEnum.AVAILABLE,
-      excerpt:
-        "Night gathers, and now my watch begins. It shall not end until my death. I shall take no wife, hold no lands, father no children. I shall wear no crowns and win no glory. I shall live and die at my post. I am the sword in the darkness. I am the watcher on the walls. I am the shield that guards the realms of men. I pledge my life and honor to the Night's Watch, for this night and all the nights to come. ―The Night's Watch oath",
-    },
-    {
-      _id: new Types.ObjectId('6209880b6f43a7e034c81003'),
-      author: 'John Snow 3',
-      title: 'Beyond the Wall',
-      available: 5,
-      totalQuantity: 5,
-      status: BookRefStatusEnum.AVAILABLE,
-      excerpt:
-        "Night gathers, and now my watch begins. It shall not end until my death. I shall take no wife, hold no lands, father no children. I shall wear no crowns and win no glory. I shall live and die at my post. I am the sword in the darkness. I am the watcher on the walls. I am the shield that guards the realms of men. I pledge my life and honor to the Night's Watch, for this night and all the nights to come. ―The Night's Watch oath",
-    },
-    {
-      _id: new Types.ObjectId('6209880b6f43a7e034c81004'),
-      author: 'John Snow 4',
-      title: 'Beyond the Wall',
-      available: 5,
-      totalQuantity: 5,
-      status: BookRefStatusEnum.AVAILABLE,
-      excerpt:
-        "Night gathers, and now my watch begins. It shall not end until my death. I shall take no wife, hold no lands, father no children. I shall wear no crowns and win no glory. I shall live and die at my post. I am the sword in the darkness. I am the watcher on the walls. I am the shield that guards the realms of men. I pledge my life and honor to the Night's Watch, for this night and all the nights to come. ―The Night's Watch oath",
-    },
-    {
-      _id: new Types.ObjectId('6209880b6f43a7e034c81005'),
-      author: 'John Snow 5',
-      title: 'Beyond the Wall',
-      available: 5,
-      totalQuantity: 5,
-      status: BookRefStatusEnum.AVAILABLE,
-      excerpt:
-        "Night gathers, and now my watch begins. It shall not end until my death. I shall take no wife, hold no lands, father no children. I shall wear no crowns and win no glory. I shall live and die at my post. I am the sword in the darkness. I am the watcher on the walls. I am the shield that guards the realms of men. I pledge my life and honor to the Night's Watch, for this night and all the nights to come. ―The Night's Watch oath",
-    },
-  ];
+  private refs: IBookRefResponse[] = [];
 
   public async getBookReferenceById(
     id: string,
@@ -72,24 +24,23 @@ export class ReferencesService {
   }
 
   public async getAllBooksRefs(): Promise<IBookRefResponse[]> {
-    // TODO Change to use db bookRefs
-    return this.refs;
+    Logger.log('GetAllBookRefs called');
+    return this.refModel.find().exec();
   }
 
-  public async createBookRef(book: IBookRefRequest): Promise<IBookRefResponse> {
-    // TODO create book in db and return it
-    Logger.log(`CreateBook called with payload`, {
-      book: JSON.stringify(book),
+  public async createBookRef(
+    bookRef: IBookRefRequest,
+  ): Promise<IBookRefResponse> {
+    Logger.log(`CreateBookRef called with payload`, {
+      user: JSON.stringify(bookRef),
     });
 
-    const createdBookRef = {
-      _id: new Types.ObjectId(`6209880b6f43a7e034c810${this.refs.length + 1}`),
-      ...book,
+    const createdBookRef = await this.refModel.create({
+      ...bookRef,
       available: 1,
       totalQuantity: 1,
-    };
+    });
     this.refs.push(createdBookRef);
-
     return createdBookRef;
   }
 
@@ -120,8 +71,7 @@ export class ReferencesService {
   }
 
   private async findBookRefById(id: string): Promise<IBookRefResponse> {
-    return (this.refs || []).find(
-      (bookRef) => bookRef?._id?.toHexString() === id,
-    );
+    const bookRef = await this.refModel.findById<IBookRefResponse>(id);
+    return bookRef;
   }
 }

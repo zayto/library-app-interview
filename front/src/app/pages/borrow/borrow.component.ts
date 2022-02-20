@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Form, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BooksService } from 'src/app/services/books/books.service';
-import { IBook } from 'src/app/types/interfaces';
+import { UsersService } from 'src/app/services/users/users.service';
+import { IBook, IUser } from 'src/app/types/interfaces';
 
 @Component({
   selector: 'app-borrow',
@@ -9,24 +14,39 @@ import { IBook } from 'src/app/types/interfaces';
   styleUrls: ['./borrow.component.css'],
 })
 export class BorrowComponent implements OnInit {
-  public searchResults: IBook[] = [];
-  public formGroup: FormGroup;
-  public formTitle: FormControl;
+  public books: IBook[] = [];
+  public users: IUser[] = [];
 
-  constructor(private booksService: BooksService) {
-    this.formTitle = new FormControl(null, [Validators.required]);
-    this.formGroup = new FormGroup({ title: this.formTitle });
+  public form: FormGroup;
+
+  constructor(
+    private booksService: BooksService,
+    private usersService: UsersService,
+  ) {
+    this.form = new FormGroup({
+      user: new FormControl(null, [Validators.required]),
+      book: new FormControl(null, [Validators.required]),
+    });
   }
 
-  async ngOnInit(): Promise<void> {
-    this.searchResults = await this.booksService.getBooksOverview(); 
+  ngOnInit(): void {
+    this.usersService.getUsers().subscribe((users) => {
+      this.users = users;
+    });
+    this.refreshBooks();
   }
 
-  async onSearch($event: any): Promise<void> {
-    // Update the book options based on search results
+  onSubmit($event: any): void {
+    $event.preventDefault();
+    console.warn('Your book request has been submitted', this.form.value);
+    this.form.reset();
+    // Submit book to be borrowed and display status message
+    // this.booksService.borrowBook(id, userId);
+  }
 
-    // TODO Query books based on search query instead of default list
-    const books = await this.booksService.getBooksOverview();
-    this.searchResults = books;
+  private refreshBooks() {
+    this.booksService.getBookRefs().subscribe((books) => {
+      this.books = books;
+    });
   }
 }

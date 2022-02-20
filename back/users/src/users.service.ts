@@ -15,6 +15,7 @@ export class UsersService {
   }
 
   async getAllUsers(): Promise<User[]> {
+    Logger.log('GetAllUsers called');
     return this.userModel.find().exec();
   }
 

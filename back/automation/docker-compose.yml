@@ -13,6 +13,13 @@ services:
       - 27017:27017
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    deploy:
+      resources:
+        limits:
+          cpus: "0.01"
+          memory: 400M
+        reservations:
+          memory: 50M
 
   redis:
     image: docker.io/bitnami/redis:6.2
@@ -21,9 +28,35 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
-      - 'redis_data:/bitnami/redis/data'
+      - "redis_data:/bitnami/redis/data"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.01"
+          memory: 400M
+        reservations:
+          memory: 50M
+
+  books:
+    build: ../books
+    depends_on:
+      - "redis"
+      - "mongodb"
+
+  users:
+    build: ../users
+    depends_on:
+      - "redis"
+      - "mongodb"
+
+  gateway:
+    build: ../gateway
+    depends_on:
+      - "redis"
+    ports:
+      - "3000:3000"
 
 volumes:
   redis_data:

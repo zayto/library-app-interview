@@ -1,0 +1,25 @@
+{
+  "name": "library-app-interview",
+  "version": "1.0.0",
+  "description": "Small library app for an interview process.",
+  "main": "index.js",
+  "scripts": {
+    "docker:all": "npm run docker:front && npm run docker:back",
+    "docker:front": "docker-compose --file front/automation/docker-compose.yml up -d",
+    "docker:back": "docker-compose --file back/automation/docker-compose.yml up -d",
+    "docker:back:build": "docker-compose --file back/automation/docker-compose.yml up --build -d",
+    "docker:down": "docker-compose --file ./back/automation/docker-compose.yml down; docker-compose --file front/automation/docker-compose.yml down",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zayto/library-app-interview.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zayto/library-app-interview/issues"
+  },
+  "homepage": "https://github.com/zayto/library-app-interview#readme"
+}

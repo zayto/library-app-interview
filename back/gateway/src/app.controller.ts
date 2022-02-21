@@ -22,9 +22,9 @@ export class AppController {
     await this.booksClient.connect();
   }
 
-  @Get('healthcheck')
-  async getStatus(): Promise<string> {
-    return 'Alive!';
+  @Get('')
+  async alive(): Promise<string> {
+    return 'Gateway is working!';
   }
 
   @Get('users')
@@ -83,7 +83,9 @@ export class AppController {
 
   @Get('refs')
   async getBookRefs(): Promise<IBookRefResponse[]> {
-    const refs: IBookRefResponse[] = await this.booksClient.send('get_refs', {}).toPromise();
+    const refs: IBookRefResponse[] = await this.booksClient
+      .send('get_refs', {})
+      .toPromise();
 
     return refs;
   }

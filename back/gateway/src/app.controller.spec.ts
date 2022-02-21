@@ -24,8 +24,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should call the healthcheck route handler"', async () => {
-      expect(await appController.getStatus()).toBe('Alive!');
+    it('should call the default route handler (alive)"', async () => {
+      expect(await appController.alive()).toBe('Gateway is working!');
     });
   });
 });

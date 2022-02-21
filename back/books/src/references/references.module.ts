@@ -10,6 +10,7 @@ import { BookRef, BookRefSchema } from '../models/book-ref.schema';
     MongooseModule.forFeature([{ name: BookRef.name, schema: BookRefSchema }]),
   ],
   controllers: [ReferencesController],
-  providers: [ReferencesService]
+  providers: [ReferencesService],
+  exports: [MongooseModule],
 })
 export class ReferencesModule {}

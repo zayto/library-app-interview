@@ -6,7 +6,9 @@ import { BookRef, BookRefSchema } from '../models/book-ref.schema';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://user:password@localhost/library'),
+    MongooseModule.forRoot(
+      `mongodb://user:password@${process.env.MONGO_HOST}/library`,
+    ),
     MongooseModule.forFeature([{ name: BookRef.name, schema: BookRefSchema }]),
   ],
   controllers: [ReferencesController],

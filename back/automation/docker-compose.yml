@@ -41,18 +41,26 @@ services:
 
   books:
     build: ../books
+    environment:
+      MONGO_HOST: "mongodb"
+      REDIS_HOST: "redis"
     depends_on:
       - "redis"
       - "mongodb"
 
   users:
     build: ../users
+    environment:
+      MONGO_HOST: "mongodb"
+      REDIS_HOST: "redis"
     depends_on:
       - "redis"
       - "mongodb"
 
   gateway:
     build: ../gateway
+    environment:
+      REDIS_HOST: "redis"
     depends_on:
       - "redis"
     ports:

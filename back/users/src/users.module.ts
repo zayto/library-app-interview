@@ -3,10 +3,14 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './models/user.schema';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://user:password@localhost/library'),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(
+      `mongodb://user:password@${process.env.MONGO_HOST}/library`,
+    ),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController],

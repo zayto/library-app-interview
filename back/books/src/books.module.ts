@@ -6,10 +6,14 @@ import { Book, BookSchema } from './models/book.schema';
 import { Reference, ReferenceSchema } from './models/reference.schema';
 import { ReferencesController } from './references/references.controller';
 import { ReferencesService } from './references/references.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://user:password@localhost/library'),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(
+      `mongodb://user:password@${process.env.MONGO_HOST}/library`,
+    ),
     MongooseModule.forFeature([
       { name: Book.name, schema: BookSchema },
       { name: Reference.name, schema: ReferenceSchema },

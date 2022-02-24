@@ -39,32 +39,32 @@ services:
         reservations:
           memory: 50M
 
-  books:
-    build: ../books
-    environment:
-      MONGO_HOST: "mongodb"
-      REDIS_HOST: "redis"
-    depends_on:
-      - "redis"
-      - "mongodb"
+  # books:
+  #   build: ../books
+  #   environment:
+  #     MONGO_HOST: "mongodb"
+  #     REDIS_HOST: "redis"
+  #   depends_on:
+  #     - "redis"
+  #     - "mongodb"
 
-  users:
-    build: ../users
-    environment:
-      MONGO_HOST: "mongodb"
-      REDIS_HOST: "redis"
-    depends_on:
-      - "redis"
-      - "mongodb"
+  # users:
+  #   build: ../users
+  #   environment:
+  #     MONGO_HOST: "mongodb"
+  #     REDIS_HOST: "redis"
+  #   depends_on:
+  #     - "redis"
+  #     - "mongodb"
 
-  gateway:
-    build: ../gateway
-    environment:
-      REDIS_HOST: "redis"
-    depends_on:
-      - "redis"
-    ports:
-      - "3000:3000"
+  # gateway:
+  #   build: ../gateway
+  #   environment:
+  #     REDIS_HOST: "redis"
+  #   depends_on:
+  #     - "redis"
+  #   ports:
+  #     - "3000:3000"
 
 volumes:
   redis_data:

@@ -1,27 +1,33 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Book, BookDocument } from './models/book.schema';
-import { IBookRequest, IBookResponse } from './models/interfaces';
+import {
+  BookStatusEnum,
+  IBookRequest,
+  IBookResponse,
+  IUserResponse,
+} from './models/interfaces';
 import { ReferencesService } from './references/references.service';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectModel(Book.name) private bookModel: Model<BookDocument>,
+    @Inject('USERS_SERVICE')
+    private readonly usersClient: ClientProxy,
     private bookRefsService: ReferencesService,
   ) {}
 
-
   public async getBookById(id: string): Promise<IBookResponse | null> {
     Logger.log(`GetBookById called with id ${id}`);
-    return await this.findBookById(id);
+    return await this.bookModel.findById(id);
   }
 
-  // TODO: to remove? or used somewhere else?
   public async getBookByReference(ref: string): Promise<IBookResponse | null> {
     Logger.log(`GetBookByReference called with ref ${ref}`);
-    return await this.findBookByRef(ref);
+    return await this.bookModel.findOne({ reference: ref });
   }
 
   public async getAllBooks(): Promise<Book[]> {
@@ -33,10 +39,17 @@ export class BooksService {
     Logger.log(`CreateBook called with payload`, {
       book: JSON.stringify(book),
     });
-    const createdBook = await this.bookModel.create(book);
-    // TODO We also need to update the associated bookRef to increment counters (available/totalQuantity) and update status
-    // after adding a new physical book
-    return createdBook;
+    if (!book.reference) {
+      throw new Error('Book reference is required to create a book');
+    }
+    // Add new quantity to associated book ref (throws if reference is invalid)
+    await this.bookRefsService.addNewBookQuantity(book.reference, 1);
+    // Add new book
+    return await this.bookModel.create({
+      ...book,
+      status: BookStatusEnum.AVAILABLE,
+      owner: null,
+    });
   }
 
   public async borrowBook(
@@ -46,25 +59,38 @@ export class BooksService {
     Logger.log(
       `BorrowBook called with bookRefId=${bookRefId} and userId=${userId}`,
     );
+    // Check if user is valid and exists
+    let user: IUserResponse;
+    try {
+      user = await this.usersClient
+        .send<IUserResponse>('get_user', {
+          id: userId,
+        })
+        .toPromise();
+    } catch (err) {}
+    if (!user) {
+      throw new Error(
+        `User with id=${userId} does not exist - can't borrow book for user.`,
+      );
+    }
     // Check if book exists and is available or not
     const bookRef = await this.bookRefsService.getBookReferenceById(bookRefId);
-
     if (!bookRef) {
       throw new Error(
         `Invalid book ref provided, ref=${bookRefId} does not exist`,
       );
     }
-
-    // Validate if book can be borrowed and if there is still available
     try {
-      await this.bookRefsService.borrowBookAndUpdateBookRef(bookRefId);
+      // Update the associated book ref (-1 quantity)
+      await this.bookRefsService.borrowBookAndUpdateBookRef(bookRef);
     } catch (error) {
       Logger.error(
         `Error while trying to borrow book with bookRefId=${bookRefId}, err: ${error?.message}`,
       );
+      throw error;
     }
 
-    // Book was available, retrieve next valid book to be borrowed, update its data and return it
+    // Book is available, retrieve next valid book to be borrowed, update its data and return it
     const borrowed = await this.borrowPhysicalBook(bookRefId, userId);
 
     return borrowed;
@@ -82,22 +108,19 @@ export class BooksService {
   }
 
   private async getNextBookToBorrow(bookRefId: string): Promise<IBookResponse> {
-    const books = await this.bookModel.find({ reference: bookRefId });
-    // Returns the first book available (with no owner)
-    const availableBook = (books || []).find(
-      (book) => book?.reference?.toHexString() === bookRefId && !book?.owner,
+    const book = await this.bookModel.findOne({
+      reference: bookRefId,
+      owner: null,
+    });
+    if (!book) {
+      throw new Error(
+        `Error while getting next available book for ref=${bookRefId}`,
+      );
+    }
+    Logger.log(
+      `Found book with id=${book._id} (ref=${bookRefId}) that is available to be borrowed`,
     );
-
-    return availableBook;
-  }
-
-  private async findBookByRef(ref: string): Promise<IBookResponse> {
-    // Returns the first book with matching ref
-    return await this.bookModel.findOne({ reference: ref});
-  }
-
-  private async findBookById(id: string): Promise<IBookResponse> {
-    return await this.bookModel.findById(id);
+    return book;
   }
 
   private async updateBookOwner(
@@ -105,6 +128,29 @@ export class BooksService {
     userId: string,
   ): Promise<void> {
     const bookId = borrowed._id?.toHexString();
-    await this.bookModel.findOneAndUpdate({ id: bookId }, { owner: userId });
+    const updated = await this.bookModel.findOneAndUpdate(
+      { id: bookId },
+      { owner: userId },
+    );
+    if (!updated) {
+      throw new Error(
+        `Error while updating book owner for book with id=${bookId} and userId=${userId}`,
+      );
+    }
+    // Update user to own this book
+    try {
+      await this.usersClient
+        .send<IUserResponse>('set_owner', { bookId: borrowed._id, userId })
+        .toPromise();
+      Logger.log(
+        `Updated book with id=${bookId} to have new owner user=${userId}`,
+      );
+    } catch (error) {
+      Logger.error(
+        `Error while updating user's book array (userId=${userId}, bookId=${bookId}): ${
+          error?.message || error
+        }`,
+      );
+    }
   }
 }

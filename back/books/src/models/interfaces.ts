@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export enum BookStatusEnum {
   AVAILABLE = 'AVAILABLE',
@@ -6,7 +6,7 @@ export enum BookStatusEnum {
   IN_TRANSIT = 'IN_TRANSIT',
   TO_BE_PICKED = 'TO_BE_PICKED',
   DAMAGED = 'DAMAGED',
-  LOST = 'LOST'
+  LOST = 'LOST',
 }
 
 export enum BookRefStatusEnum {
@@ -17,7 +17,6 @@ export enum BookRefStatusEnum {
 
 export interface IBookRequest {
   reference: string;
-  status: BookStatusEnum;
 }
 
 export interface IBookResponse {
@@ -31,7 +30,6 @@ export interface IBookRefRequest {
   title: string;
   author: string;
   excerpt: string;
-  status: BookRefStatusEnum;
   quantity: number;
 }
 
@@ -43,4 +41,16 @@ export interface IBookRefResponse {
   status: BookRefStatusEnum;
   available: number; // Quantity available in the shelves
   totalQuantity: number; // Total quantity owned by the library for this reference
+}
+
+export interface IUserResponse {
+  _id: Types.ObjectId;
+  firstName: string;
+  lastName: string;
+  books: Types.ObjectId[];
+}
+
+export interface IUserRequest {
+  firstName: string;
+  lastName: string;
 }

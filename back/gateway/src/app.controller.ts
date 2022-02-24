@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
+  IBookRefRequest,
   IBookRefResponse,
   IBookRequest,
   IBookResponse,
@@ -88,5 +89,34 @@ export class AppController {
       .toPromise();
 
     return refs;
+  }
+
+  @Get('refs/:id')
+  async getRefById(@Param('id') id: number): Promise<IBookRefResponse> {
+    const ref: IBookRefResponse = await this.booksClient
+      .send('get_ref', { id })
+      .toPromise();
+
+    return ref;
+  }
+
+  @Post('refs/create')
+  async createBookRef(
+    @Body() bookRef: IBookRefRequest,
+  ): Promise<IBookRefResponse> {
+    const createdRef: IBookRefResponse = await this.booksClient
+      .send('create_ref', bookRef)
+      .toPromise();
+
+    return createdRef;
+  }
+
+  @Post('borrow')
+  async borrowBook(
+    @Body() payload: { refId: string; userId: string },
+  ): Promise<IBookResponse> {
+    const book = await this.booksClient.send('borrow', payload).toPromise();
+
+    return book;
   }
 }

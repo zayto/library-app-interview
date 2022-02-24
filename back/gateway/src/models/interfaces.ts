@@ -67,4 +67,3 @@ export enum BookRefStatusEnum {
   TO_ORDER_BACK = 'TO_ORDER_BACK',
   UNAVAILABLE = 'UNAVAILABLE',
 }
-

@@ -8,7 +8,9 @@ export class ReferencesController {
   constructor(private readonly bookRefsService: ReferencesService) {}
 
   @MessagePattern('get_ref')
-  async getBookRefById(@Payload() payload: { id: string }): Promise<IBookRefResponse> {
+  async getBookRefById(
+    @Payload() payload: { id: string },
+  ): Promise<IBookRefResponse> {
     return await this.bookRefsService.getBookReferenceById(payload.id);
   }
 
@@ -18,7 +20,9 @@ export class ReferencesController {
   }
 
   @MessagePattern('create_ref')
-  async createBook(@Payload() bookRef: IBookRefRequest): Promise<IBookRefResponse> {
+  async createBookRef(
+    @Payload() bookRef: IBookRefRequest,
+  ): Promise<IBookRefResponse> {
     return await this.bookRefsService.createBookRef(bookRef);
   }
 }

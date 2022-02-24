@@ -8,8 +8,8 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @MessagePattern('get_book')
-  async getBookById(@Payload() payload: { id: string }): Promise<IBookResponse> {
-    return await this.booksService.getBookByReference(payload.id);
+  async getBookById(@Payload() { id }: { id: string }): Promise<IBookResponse> {
+    return await this.booksService.getBookByReference(id);
   }
 
   @MessagePattern('get_books')
@@ -20,5 +20,14 @@ export class BooksController {
   @MessagePattern('create_book')
   async createBook(@Payload() book: IBookRequest): Promise<IBookResponse> {
     return await this.booksService.createBook(book);
+  }
+
+  @MessagePattern('borrow')
+  async borrowBook(
+    @Payload() { refId, userId }: { refId: string; userId: string },
+  ): Promise<IBookResponse> {
+    const book = await this.booksService.borrowBook(refId, userId);
+
+    return book;
   }
 }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BooksController } from './books.controller';
 import { BooksService } from './books.service';
@@ -8,6 +9,7 @@ import { ReferencesController } from './references/references.controller';
 import { ReferencesService } from './references/references.service';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ReturnedBooksConsumer } from './consumers/returned-books-consumer';
 
 @Module({
   imports: [
@@ -26,8 +28,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       { name: Book.name, schema: BookSchema },
       { name: Reference.name, schema: ReferenceSchema },
     ]),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: 6379,
+      },
+    }),
+    BullModule.registerQueue({
+      name: 'returnedBooks',
+    }),
   ],
   controllers: [BooksController, ReferencesController],
-  providers: [BooksService, ReferencesService],
+  providers: [BooksService, ReferencesService, ReturnedBooksConsumer],
 })
 export class BooksModule {}

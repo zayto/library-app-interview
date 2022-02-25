@@ -119,4 +119,11 @@ export class AppController {
 
     return book;
   }
+
+  @Post('return')
+  async returnBook(
+    @Body() payload: { refId: string; userId: string },
+  ): Promise<void> {
+    await this.booksClient.send('return', payload).toPromise();
+  }
 }

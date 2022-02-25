@@ -30,4 +30,11 @@ export class BooksController {
 
     return book;
   }
+
+  @MessagePattern('return')
+  async returnBook(
+    @Payload() { refId, userId }: { refId: string; userId: string },
+  ): Promise<void> {
+    const returned = await this.booksService.returnBook(refId, userId);
+  }
 }

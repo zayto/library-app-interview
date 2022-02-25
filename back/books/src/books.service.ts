@@ -1,6 +1,8 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
+import { Queue } from 'bull';
 import { Model } from 'mongoose';
 import { Book, BookDocument } from './models/book.schema';
 import {
@@ -17,6 +19,7 @@ export class BooksService {
     @InjectModel(Book.name) private bookModel: Model<BookDocument>,
     @Inject('USERS_SERVICE')
     private readonly usersClient: ClientProxy,
+    @InjectQueue('returnedBooks') private returnedBooksQueue: Queue,
     private bookRefsService: ReferencesService,
   ) {}
 
@@ -96,6 +99,49 @@ export class BooksService {
     return borrowed;
   }
 
+  public async returnBook(bookRefId: string, userId: string): Promise<void> {
+    Logger.log(
+      `ReturnBook called with bookRefId=${bookRefId} and userId=${userId}`,
+    );
+    // Check if user is valid and exists
+    let user: IUserResponse;
+    try {
+      user = await this.usersClient
+        .send<IUserResponse>('get_user', {
+          id: userId,
+        })
+        .toPromise();
+    } catch (err) {}
+    if (!user) {
+      throw new Error(
+        `User with id=${userId} does not exist - can't borrow book for user.`,
+      );
+    }
+    // Check if it's a valid book ref
+    const bookRef = await this.bookRefsService.getBookReferenceById(bookRefId);
+    if (!bookRef) {
+      throw new Error(
+        `Invalid book ref provided, ref=${bookRefId} does not exist`,
+      );
+    }
+    // Check if a book with this ref was indeed borrowed by the retrieved user
+    try {
+      // TODO
+    } catch (error) {
+      // TODO
+    }
+
+    // Book was indeed borrowed, add it to queue of returned books to handle
+    const fakeBookId = '6218c9a3f9b7260d758753c1'; // TODO Retrieve book id from repository or from user's bookIds array
+    const fakeRefId = '6216c59ca9ca02ff313aaa78'; // TODO Retrieve book id from repository or from user's bookIds array
+    const fakeUserId = '6209880b6f43a7e034c84943'; // TODO Retrieve book id from repository or from user's bookIds array
+    try {
+      await this.addReturnedBookToQueue(fakeBookId, fakeRefId, fakeUserId);
+    } catch (error) {
+      // TODO
+    }
+  }
+
   private async borrowPhysicalBook(
     bookRefId: string,
     userId: string,
@@ -152,5 +198,20 @@ export class BooksService {
         }`,
       );
     }
+  }
+
+  private async addReturnedBookToQueue(
+    bookRefId: string,
+    bookId: string,
+    userId: string,
+  ): Promise<void> {
+    Logger.log(
+      `Add returned book ref=${bookRefId}, id=${bookId}, userId=${userId} to queue`,
+    );
+    const job = await this.returnedBooksQueue.add('return', {
+      bookRefId,
+      bookId,
+      userId,
+    });
   }
 }

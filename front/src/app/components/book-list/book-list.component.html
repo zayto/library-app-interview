@@ -1,14 +1,16 @@
 <mat-list class="book-list">
   <div class="grid">
     <mat-card *ngFor="let book of books" class="book-card">
-      <mat-card-title>{{ book.title }} <span class="ref">(ref: {{ book._id }})</span></mat-card-title>
+      <mat-card-title
+        >{{ book.title }}
+        <span class="ref">(ref: {{ book._id }})</span></mat-card-title
+      >
       <mat-card-subtitle>{{ book.author }}</mat-card-subtitle>
       <mat-card-content>
         <p>{{ book.excerpt }}</p>
       </mat-card-content>
       <mat-card-actions>
-        <button class="action" mat-button>View</button>
-        <button class="action" mat-button>Borrow</button>
+        <button mat-raised-button color="primary" class="action">Borrow</button>
       </mat-card-actions>
     </mat-card>
   </div>

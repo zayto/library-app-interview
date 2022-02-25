@@ -15,4 +15,10 @@ export class BooksService {
 
     return this.http.get<IBook[]>(url);
   }
+
+  borrowBook(refId: string, userId: string): Observable<IBook> {
+    const url = `${environment.apiUrl}/books`;
+
+    return this.http.post<IBook>(url, { refId, userId });
+  }
 }

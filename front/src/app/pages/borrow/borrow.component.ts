@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { BooksService } from 'src/app/services/books/books.service';
 import { UsersService } from 'src/app/services/users/users.service';
 import { IBook, IUser } from 'src/app/types/interfaces';
@@ -21,7 +17,7 @@ export class BorrowComponent implements OnInit {
 
   constructor(
     private booksService: BooksService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {
     this.form = new FormGroup({
       user: new FormControl(null, [Validators.required]),
@@ -36,12 +32,14 @@ export class BorrowComponent implements OnInit {
     this.refreshBooks();
   }
 
-  onSubmit($event: any): void {
-    $event.preventDefault();
+  onSubmit(): void {
     console.warn('Your book request has been submitted', this.form.value);
-    this.form.reset();
     // Submit book to be borrowed and display status message
-    // this.booksService.borrowBook(id, userId);
+    this.booksService.borrowBook('id', 'userId').subscribe((borrowed) => {
+      console.log(borrowed);
+    });
+
+    this.form.reset();
   }
 
   private refreshBooks() {

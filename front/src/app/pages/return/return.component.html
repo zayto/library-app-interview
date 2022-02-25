@@ -5,16 +5,23 @@
     put it back in the shelves for others readers to get it.
   </p>
 
-  <form class="example-form">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Book reference</mat-label>
-      <input
-        type="text"
-        placeholder="Fill in the book reference"
-        aria-label="Book reference"
-        matInput
-      />
-      </mat-form-field>
-      <button type="submit" mat-button-primary>Submit</button>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    <mat-form-field appearance="fill">
+      <mat-label>Book To Return</mat-label>
+      <mat-select name="book">
+        <mat-option *ngFor="let book of books" [value]="book._id">
+          {{ book.title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>User</mat-label>
+      <mat-select name="user">
+        <mat-option *ngFor="let user of users" [value]="user._id">
+          {{ user.firstName }} {{ user.lastName?.toUpperCase() }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
   </form>
 </div>

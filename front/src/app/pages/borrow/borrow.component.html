@@ -4,7 +4,7 @@
     Find your next read from our collection and borrow it using the form below.
   </p>
 
-  <form class="example-form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
     <mat-form-field appearance="fill">
       <mat-label>Favorite Book</mat-label>
       <mat-select name="book">
@@ -21,8 +21,6 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <button type="submit" (ngSubmit)="onSubmit($event)" mat-button-primary>
-      Submit
-    </button>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
   </form>
 </div>

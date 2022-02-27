@@ -37,7 +37,7 @@ The docker-compose files for the backend microservices and the front Angular app
 
 The front is an Angular app that connects to the NestJs backend using HTTP calls. All routes are public to make it simpler.
 
-## Backend
+### Backend
 
 The backend is a NestJs app with a gateway (listening for HTTP calls and exposing a REST API) that communicates with the micro-services (users/books) to retrieve or update data from the database. The communications use Redis as the transport protocol (the gateway and the microservices emit events in Redis and they can listen to those events to trigger handlers).
 

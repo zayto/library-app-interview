@@ -82,7 +82,6 @@ describe('BooksController', () => {
 
   describe('root', () => {
     it('should return all books', async () => {
-      // TODO: Fix this test, need to properly mock the mongoose find/exec calls
       const books = await booksController.getAllBooks();
       expect(books).toMatchSnapshot();
     });

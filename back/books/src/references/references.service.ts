@@ -5,8 +5,8 @@ import {
   BookRefStatusEnum,
   IBookRefRequest,
   IBookRefResponse,
-} from 'src/models/interfaces';
-import { Reference, ReferenceDocument } from 'src/models/reference.schema';
+} from '../models/interfaces';
+import { Reference, ReferenceDocument } from '../models/reference.schema';
 
 @Injectable()
 export class ReferencesService {

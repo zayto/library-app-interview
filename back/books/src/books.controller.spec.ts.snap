@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BooksController root should return all books 1`] = `
+Array [
+  Object {
+    "_id": "6209880b6f43a7e034c84941",
+    "owner": null,
+    "reference": "6209880b6f43a7e034c84943",
+    "status": "AVAILABLE",
+  },
+]
+`;

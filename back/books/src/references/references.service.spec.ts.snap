@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReferencesService should return all bookRefs 1`] = `
+Array [
+  Object {
+    "_id": "6209880b6f43a7e034c84943",
+    "author": "Author",
+    "available": 1,
+    "excerpt": "Excerpt",
+    "status": "AVAILABLE",
+    "title": "Title",
+    "totalQuantity": 1,
+  },
+]
+`;

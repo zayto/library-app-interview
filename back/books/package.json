@@ -65,6 +65,7 @@
       "json",
       "ts"
     ],
+    "snapshotResolver": "<rootDir>/../snapshot-resolver.js",
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
